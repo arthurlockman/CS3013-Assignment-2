@@ -1,4 +1,5 @@
-obj-m := interceptor.o
+obj-m := part1.o
+obj-m += part2.o
 KDIR := /lib/modules/$(shell uname -r)/build
 PWD := $(shell pwd)
 
