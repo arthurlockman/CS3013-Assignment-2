@@ -22,7 +22,7 @@ asmlinkage long new_sys_cs3013_syscall2(struct processinfo *info) {
     struct list_head *p;
     tmp.state = task_info->state;
     tmp.pid = task_info->pid;
-    tmp.parent_pid = task_info->real_parent->pid;
+    tmp.parent_pid = task_info->parent->pid;
 
     if (!list_empty(&task_info->children))
     {
@@ -33,7 +33,7 @@ asmlinkage long new_sys_cs3013_syscall2(struct processinfo *info) {
     {
         tmp.youngest_child = -1;
     }
-    if (task_info->sibling.next != &task_info->sibling)
+    if (list_entry(task_info->sibling.next, struct task_struct, sibling)->pid > tmp.pid)
     {
         younger_sibling = list_entry(task_info->sibling.next, struct task_struct, sibling);
         tmp.younger_sibling = younger_sibling->pid;
@@ -42,7 +42,7 @@ asmlinkage long new_sys_cs3013_syscall2(struct processinfo *info) {
     {
         tmp.younger_sibling = -1;
     }
-    if (task_info->sibling.prev != &task_info->sibling)
+    if (list_entry(task_info->sibling.prev, struct task_struct, sibling)->pid < tmp.pid)
     {
         older_sibling = list_entry(task_info->sibling.prev, struct task_struct, sibling);
         tmp.older_sibling = older_sibling->pid;
