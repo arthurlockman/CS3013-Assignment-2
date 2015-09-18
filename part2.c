@@ -3,7 +3,7 @@
  * Arthur Lockman and Tucker Haydon
  * part2.c
  *
- * This part of the projects intercepts and replaces our cs3013_syscall_1 
+ * This part of the projects intercepts and replaces our cs3013_syscall_2 
  * function that we compiled into the kernel with one that gets the 
  * task information for the currently running process.
  */
