@@ -5,4 +5,4 @@
 *.symvers
 .tmp_versions/*
 *.cmd
-test
+part2test

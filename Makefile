@@ -6,7 +6,8 @@ PWD := $(shell pwd)
 
 all:
 	$(MAKE) -C $(KDIR) M=$(PWD) modules
+	g++ part2test.cpp -o part2test
 
 clean:
 	$(MAKE) -C $(KDIR) M=$(PWD) clean
-
+	rm part2test test
