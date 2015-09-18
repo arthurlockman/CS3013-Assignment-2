@@ -1,0 +1,44 @@
+arthurlockman@ubuntu:~/Desktop/project-2$ ./part2test 
+I am a parent process. I am printing stats before my child wakes up.
+Got a return value from syscall: 0
+State:                                 0
+PID:                                5355
+Parent PID:                         2469
+Youngest Child:               1479363893
+Younger Sibling:                      -1
+Older Sibling:                         1
+UID:                                1000
+Start Time:                1176640083065
+User Time:                    1675911808
+System Time:                  1675927808
+Child User Time:              1715879808
+Child Sys Time:               1715895808
+I am a child process. I sleep for 1 second.
+Got a return value from syscall: 0
+State:                                 0
+PID:                                5356
+Parent PID:                         5355
+Youngest Child:                       -1
+Younger Sibling:                      -1
+Older Sibling:                         1
+UID:                                1000
+Start Time:                1176641168168
+User Time:                    1715847808
+System Time:                  1715863808
+Child User Time:                       0
+Child Sys Time:                        0
+I am a parent process. I am printing stats after my child has woken.
+Got a return value from syscall: 0
+State:                                 0
+PID:                                5355
+Parent PID:                         2469
+Youngest Child:                       -1
+Younger Sibling:                      -1
+Older Sibling:                         1
+UID:                                1000
+Start Time:                1176640083065
+User Time:                    1675911808
+System Time:                  1675927808
+Child User Time:                       0
+Child Sys Time:                        0
+

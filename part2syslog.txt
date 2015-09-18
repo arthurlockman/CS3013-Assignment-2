@@ -1,0 +1,3 @@
+Sep 17 20:21:34 ubuntu kernel: [ 5435.237588] Interceptor: Found syscall table at address: 0xC1669140
+Sep 17 20:21:56 ubuntu kernel: [ 5435.237594] Loaded interceptor!Unloaded interceptor!
+Sep 17 20:21:57 ubuntu kernel: [ 5456.926934] Interceptor: Found syscall table at address: 0xC1669140Loaded interceptor!
