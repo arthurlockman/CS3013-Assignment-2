@@ -1,10 +1,14 @@
 Authors: Arthur Lockman (ajlockman) & Tucker Haydon (tchaydon)
 
-To compile the files, run make with the Makefile in the present directory. The Makefile will create two .o files (1 for each part of the assignment). Execute the files to create a .ko file. Run "sudo insmod [.ko file]" to insert the system call interception. To remove it, call "sudo rmmod [.ko file]".
+To compile the files, run make with the Makefile in the present directory. The Makefile will create two .ko files (1 for each part of the assignment). Execute the files to create a .ko file. Run "sudo insmod [.ko file]" to insert the system call interception. To remove it, call "sudo rmmod [.ko file]".
+
+The makefile also builds the test code for part 2 of the assignment. To run the code, type ./part2test.
 
 Part 1
 --------------------------------------
 For part 1 of the project, we used a Loadable Kernel Module to intercept the system open and close files. In our intereption function, we included system logging to each function. The program writes to the logs everytime a user opens and closes a file, making note of which user and which file. The program ensures that it only logs user activity by checking the uid of the open/close call. If the uid of the call is greater than or equal to 1000, a user called the function, otherwise the OS or kernel called the function. 
+
+We did not feel it was necessary to create manual test code for this section of the assignment, as the system log we captured shows that the functions are working as intended.
 
 To our knowledge, the function works exactly as described and there are no bugs. 
 
