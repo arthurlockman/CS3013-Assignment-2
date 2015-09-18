@@ -10,4 +10,4 @@ all:
 
 clean:
 	$(MAKE) -C $(KDIR) M=$(PWD) clean
-	rm part2test test
+	rm part2test

@@ -1,3 +1,12 @@
+/**
+ * CS 3013 Project 2
+ * Arthur Lockman and Tucker Haydon
+ * part1.c
+ *
+ * This part of the project required us to intercept and replace the
+ * open() and close() system calls and print out information about the
+ * file being opened and the user in the syslog.
+ */
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/syscalls.h>
@@ -10,17 +19,17 @@ asmlinkage long (*ref_sys_close)(unsigned int fd);
 
 asmlinkage long new_sys_open(const char __user *filename,
         int flags, umode_t mode) {
-    int uid = current_uid().val;
-    if (uid >= 1000)
-        printk(KERN_INFO "User %d is opening file: %s\n", uid, filename);
-    return ref_sys_open(filename, flags, mode);
+    int uid = current_uid().val; //Get the current UID
+    if (uid >= 1000) //Check if the UID is in the user space
+        printk(KERN_INFO "User %d is opening file: %s\n", uid, filename); //print info
+    return ref_sys_open(filename, flags, mode); //Call original syscall
 }
 
 asmlinkage long new_sys_close(unsigned int fd) {
-    int uid = current_uid().val;
-    if (uid >= 1000)
-        printk(KERN_INFO "User %d is closing file descriptor: %d\n", uid, fd);
-    return ref_sys_close(fd);
+    int uid = current_uid().val; //Get the current user ID
+    if (uid >= 1000) //Check if UID is in the user space
+        printk(KERN_INFO "User %d is closing file descriptor: %d\n", uid, fd); //print info
+    return ref_sys_close(fd); //Call original syscall
 }
 
 static unsigned long **find_sys_call_table(void) {
@@ -83,7 +92,7 @@ static int __init interceptor_start(void) {
     /* Replace the existing system calls */
     disable_page_protection();
 
-    sys_call_table[__NR_open] = (unsigned long *)new_sys_open;
+    sys_call_table[__NR_open] = (unsigned long *)new_sys_open; //replace entries in the syscall table
     sys_call_table[__NR_close] = (unsigned long *)new_sys_close;
 
     enable_page_protection();
@@ -101,7 +110,7 @@ static void __exit interceptor_end(void) {
 
     /* Revert all system calls to what they were before we began. */
     disable_page_protection();
-    sys_call_table[__NR_open] = (unsigned long *)ref_sys_open;
+    sys_call_table[__NR_open] = (unsigned long *)ref_sys_open; //return entries in the syscall table
     sys_call_table[__NR_close] = (unsigned long *)ref_sys_close;
     enable_page_protection();
 

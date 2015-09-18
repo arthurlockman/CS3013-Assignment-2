@@ -1,3 +1,13 @@
+/**
+ * CS 3013 Project 2
+ * Arthur Lockman and Tucker Haydon
+ * part2.c
+ *
+ * This part of the projects intercepts and replaces our cs3013_syscall_1 
+ * function that we compiled into the kernel with one that gets the 
+ * task information for the currently running process.
+ */
+
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/syscalls.h>
@@ -14,63 +24,63 @@ unsigned long **sys_call_table;
 asmlinkage long (*ref_sys_cs3013_syscall2)(void);
 
 asmlinkage long new_sys_cs3013_syscall2(struct processinfo *info) {
-    struct task_struct *task_info = current;
+    struct task_struct *task_info = current; //initialize temporary data holders for various structs
     struct processinfo tmp;
     struct task_struct *youngest_child;
     struct task_struct *younger_sibling;
     struct task_struct *older_sibling;
     struct list_head *p;
-    tmp.state = task_info->state;
-    tmp.pid = task_info->pid;
-    tmp.parent_pid = task_info->parent->pid;
+    tmp.state = task_info->state; //Capture process state from task_info
+    tmp.pid = task_info->pid; //Capture current PID
+    tmp.parent_pid = task_info->parent->pid; //Capture parent PID
 
-    if (!list_empty(&task_info->children))
+    if (!list_empty(&task_info->children)) //Check if there are any children, if there are find the youngest and store its PID
     {
         youngest_child = list_last_entry(&task_info->children, struct task_struct, children);
         tmp.youngest_child = youngest_child->pid;
     }
     else
     {
-        tmp.youngest_child = -1;
+        tmp.youngest_child = -1; //If no children, set child PID to -1.
     }
-    if (list_entry(task_info->sibling.next, struct task_struct, sibling)->pid > tmp.pid)
+    if (list_entry(task_info->sibling.next, struct task_struct, sibling)->pid > tmp.pid) //Check if there are any siblings
     {
-        younger_sibling = list_entry(task_info->sibling.next, struct task_struct, sibling);
+        younger_sibling = list_entry(task_info->sibling.next, struct task_struct, sibling); //Store younger sibling if it exists
         tmp.younger_sibling = younger_sibling->pid;
     }
     else
     {
-        tmp.younger_sibling = -1;
+        tmp.younger_sibling = -1; //Set pid to -1 if there are no younger siblings.
     }
-    if (list_entry(task_info->sibling.prev, struct task_struct, sibling)->pid < tmp.pid)
+    if (list_entry(task_info->sibling.prev, struct task_struct, sibling)->pid < tmp.pid) //Check if there are any older siblings
     {
-        older_sibling = list_entry(task_info->sibling.prev, struct task_struct, sibling);
+        older_sibling = list_entry(task_info->sibling.prev, struct task_struct, sibling); //Store PID if one exists
         tmp.older_sibling = older_sibling->pid;
     }
     else
     {
-        tmp.older_sibling = -1;
+        tmp.older_sibling = -1; //Set PID to -1 if there are none.
     }
 
-    tmp.uid = task_info->real_cred->uid.val;
-    tmp.start_time = timespec_to_ns(&task_info->start_time);
-    tmp.user_time = cputime_to_usecs(&task_info->utime);
-    tmp.sys_time = cputime_to_usecs(&task_info->stime);
-    tmp.cutime = 0;
+    tmp.uid = task_info->real_cred->uid.val; //Store UID extracted from real_cred struct in task_info.
+    tmp.start_time = timespec_to_ns(&task_info->start_time); ///Capture and convert start time
+    tmp.user_time = cputime_to_usecs(&task_info->utime); //Capture and convert user time
+    tmp.sys_time = cputime_to_usecs(&task_info->stime); //Capture and convert system time
+    tmp.cutime = 0; //initialize cutime and cstime variables
     tmp.cstime = 0;
-    if (!list_empty(&task_info->children))
+    if (!list_empty(&task_info->children)) //Check if there are any children
     {
-        list_for_each(p, &task_info->children)
+        list_for_each(p, &task_info->children) //If there are children, loop through each child
         {
             struct task_struct *s;
             s = list_entry(p, struct task_struct, children);
-            tmp.cutime += cputime_to_usecs(&s->utime);
+            tmp.cutime += cputime_to_usecs(&s->utime); //Accumulate child system and child user time
             tmp.cstime += cputime_to_usecs(&s->stime);
         }
     }
 
     if (copy_to_user(info, &tmp, sizeof tmp))
-        return EFAULT;
+        return EFAULT; //Copy struct back to user.
     return 0;
 }
 

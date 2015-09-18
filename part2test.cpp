@@ -1,3 +1,13 @@
+/**
+ * CS 3013 Project 2
+ * Arthur Lockman and Tucker Haydon
+ * part2test.cpp
+ *
+ * This code tests the insertion of the system call in part 2 of the project.
+ * To do this, it prints the stats of the main process after forking
+ * twice, and then has each child print out stats as well. This shows that
+ * all of the functionality is working as intended.
+ */
 #include <sys/syscall.h>
 #include <iostream>
 #include <iomanip>
